@@ -1,0 +1,15 @@
+XSS:
+	Django by default escapes dangerous characters to prevent XSS. However, it provides a "safe" filter that is meant to be used when the data is known to be safe. When the "safe" filter is provided, Django will not escape dangerous characters, therefore enabling XSS. In line 60 of gift.html and line 62 of item-single.html, the "safe" filter is used. We can exploit this by including javascript in our URL like so:
+	"http://127.0.0.1:8000/buy.html?director=<script>alert("One attack, that exploits a XSS (cross-site scripting) vulnerability")</script>"
+
+CSRF:
+	We can use a CSRF exploit to make our victim unknowingly gift a giftcard to the attacker. While some html templates like item-single.html, login.html, and register.html make use of the csrf_token to prevent CSRF attacks, other templates like gift.html do not make use of it. This enables us to craft a malicious link that, when clicked by the victim, will gift a giftcard to the attacker. The malicious html can be seen in attack.html in the part1 folder.
+
+SQL injection:
+	We can use SQL injection to obtain the salted password of any user given their username. The vulnerability lies in line 211 of views.py, where Cards.objects.raw() is used. We can craft a fake giftcard file with malicious SQL code in its "signature" field, which will give us the salted password from the database. While this is not necessary, to make the SQL query return only the salted password we can provide something like "' AND 1=0". After that, we can use UNION SELECT to get the password from LegacySite_user with whatever username we want to target. The full crafted giftcard file looks like this:
+	{"merchant_id": "NYU Apparel Card", "customer_id": "asdf", "total_value": "23", "records": [{"record_type": "amount_change", "amount_added": 2000, "signature": "' AND 1=0 UNION SELECT password FROM LegacySite_user WHERE username = 'admin' -- "}]}
+
+Extra (command injection):
+	In extras.py, we can see that the parse_card_data() function uses card_path_name, which is partially provided by the user. As malicious attackers, we can exploit this to inject commands into the server. In the "Use a Card" page in the website, and in the "NameYourCard" field, we can inject commands which will be run when the system() function is called in line 70 of extras.py. The payload looks like this:
+	"; echo HELLO YOU ARE BEING INJECTED; whoami; ifconfig;"
+	One interesting thing was that this only worked when testing it on my Mac. I could not reproduce it on my Windows setup. This might be due to different operating systems using different shells. I tried using '&' instead of ';', but still I could not reproduce this exploit on my Windows setup.
