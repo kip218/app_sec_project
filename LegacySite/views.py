@@ -112,6 +112,7 @@ def buy_card_view(request, prod_num=0):
         return redirect("/buy/1")
 
 # KG: What stops an attacker from making me buy a card for him?
+@csrf_protect
 def gift_card_view(request, prod_num=0):
     context = {"prod_num" : prod_num}
     if request.method == "GET" and 'username' not in request.GET:

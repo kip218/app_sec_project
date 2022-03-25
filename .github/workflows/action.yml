@@ -4,4 +4,5 @@ jobs:
   check-bats-version:
     runs-on: self-hosted
     steps:
+      - uses: actions/checkout@v2
       - run: echo "Hello world"
