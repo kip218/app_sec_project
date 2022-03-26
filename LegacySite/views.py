@@ -209,7 +209,7 @@ def use_card_view(request):
         print(card_data.strip())
         signature = json.loads(card_data)['records'][0]['signature']
         # signatures should be pretty unique, right?
-        card_query = Card.objects.raw('select id from LegacySite_card where data LIKE \'%%%s%%\'' % signature)
+        card_query = Card.objects.raw('select id from LegacySite_card where data LIKE \'%%%s%%\'', {'signature':signature})
         user_cards = Card.objects.raw('select id, count(*) as count from LegacySite_card where LegacySite_card.user_id = %s' % str(request.user.id))
         card_query_string = ""
         print("Found %s cards" % len(card_query))
