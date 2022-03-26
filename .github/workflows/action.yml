@@ -13,6 +13,8 @@ jobs:
       - run: python manage.py makemigrations LegacySite
       - run: python manage.py migrate
       - run: bash import_dbs.sh
-      - run: mkdir LegacySite/fixtures
-      - run: python manage.py dumpdata LegacySite > LegacySite/fixtures/testdata.json
+      - run: python -m venv djangoenv
+      - run: source djangoenv/bin/activate
+      - run: mkdir djangoenv/fixtures
+      - run: python manage.py dumpdata djangoenv > djangoenv/fixtures/testdata.json
       - run: python manage.py test
