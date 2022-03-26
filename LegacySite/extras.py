@@ -4,6 +4,7 @@ from hashlib import sha256
 from django.conf import settings
 from os import urandom, system
 import sys, os
+import subprocess
 
 SEED = settings.RANDOM_SEED
 
@@ -67,7 +68,7 @@ def parse_card_data(card_file_data, card_path_name):
         card_file.write(card_file_data)
     # KG: Are you sure you want the user to control that input?
     print(f"running: {CARD_PARSER} 2 {card_path_name} > tmp_file")
-    ret_val = system(f"{CARD_PARSER} 2 {card_path_name} > tmp_file")
+    ret_val = subprocess.run(f"{CARD_PARSER} 2 {card_path_name} > tmp_file")
     if ret_val != 0:
         return card_file_data
     with open("tmp_file", 'rb') as tmp_file:

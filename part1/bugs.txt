@@ -14,5 +14,6 @@ SQL injection:
 
 Extra (command injection):
 	In extras.py, we can see that the parse_card_data() function uses card_path_name, which is partially provided by the user. As malicious attackers, we can exploit this to inject commands into the server. In the "Use a Card" page in the website, and in the "NameYourCard" field, we can inject commands which will be run when the system() function is called in line 70 of extras.py. One thing to note is that for system() to be triggered, the giftcard file provided needs to be in improper json format, so that the try except section in parse_card_data() fails. The payload looks like this:
-	"; echo HELLO YOU ARE BEING INJECTED; whoami; ifconfig;"
+	"; echo HELLO YOU ARE BEING INJECTED; whoami; echo hashthis | md5;"
 	One interesting thing was that this only worked when testing it on my Mac. I could not reproduce it on my Windows setup. This might be due to different operating systems using different shells. I tried using '&' instead of ';', but still I could not reproduce this exploit on my Windows setup.
+	Fixed by using subprocess.run() instead of system().

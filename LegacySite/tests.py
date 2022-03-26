@@ -46,10 +46,12 @@ class MyTest(TestCase):
         # will fail if correct admin_password_hash is leaked through sql injection
         self.assertNotContains(response, admin_password_hash)
 
-    #incomplete
+    # if you can see md5 hash in test results, command injection succeeded.
     def test_command_injection(self):
         self.client.login(username='attacker', password='nefarious')
-        gftcrd = StringIO("CORRUPTED")
-        payload = "; echo HELLO YOU ARE BEING INJECTED; whoami; ifconfig;"
-        payload = 'attacker'
-        response = self.client.post('/use.html', {'card_data':gftcrd, 'card_supplied':True, 'card_fname':payload})
+        gftcrd = StringIO("CORRUPT GIFTCARD")
+        payload = "; echo HELLO YOU ARE BEING INJECTED; whoami; echo hashthis | md5;"
+        try:
+            response = self.client.post('/use.html', {'card_data':gftcrd, 'card_supplied':True, 'card_fname':payload})
+        except:
+            pass

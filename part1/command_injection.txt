@@ -1,1 +1,1 @@
-; echo HELLO YOU ARE BEING INJECTED; whoami; ifconfig;
+; echo HELLO YOU ARE BEING INJECTED; whoami; echo hashthis | md5;
