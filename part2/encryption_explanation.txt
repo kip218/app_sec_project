@@ -4,10 +4,10 @@ In models.py I imported EncryptedBinaryField from fernet_fields, and replaced th
 
 I decided to store the key as an environmental variable. Settings.py will no longer expose the key, but import it as an environmental variable. The .env file also needs to be included in the .gitignore file. 
 
-Once I set this up, the sql_injection test in tests.py stopped working properly. The error was: "django.core.exceptions.FieldError: EncryptedBinaryField 'exact' does not support lookups". When running the server locally, the site crashed when I tried to use the "Use a Card" function with the following message: "InvalidToken at /use.html". The problem seemed to occur due to a line in use-card.html: "{% for card_item in card_list %}". I deleted those lines which fixed the error on the website.
-
-Another problem is the use_card_view() function in views.py:
+Once I set this up, the sql_injection test in tests.py stopped working properly. The error was: "django.core.exceptions.FieldError: EncryptedBinaryField 'exact' does not support lookups". 
+The problem is the use_card_view() function in views.py:
 "card_query = Card.objects.raw('select id from LegacySite_card where data LIKE \'%%%s%%\'', {'signature':signature})"
 This line of code attempts to search the database for a card based on Card.data, which is an encrypted field and does not support lookups anymore. The site no longer supports card lookups by Card.data, so any code that tries to do this had to be commented out.
-
 "card = Card.objects.get(data=card_data)" is also a lookup based on Card.data, so we need to be careful of this as well.
+
+Other parts of the website were also broken. For example, when running the server locally, the site crashed when I tried to use the "Use a Card" function with the following message: "InvalidToken at /use.html". The problem seemed to occur due to a line in use-card.html: "{% for card_item in card_list %}". It worked fine when I deleted those lines from the template, but it was easy to find other ways to break the site. I am not entirely sure why and how to fix these errors.

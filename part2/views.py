@@ -209,14 +209,15 @@ def use_card_view(request):
         print(card_data.strip())
         signature = json.loads(card_data)['records'][0]['signature']
         # signatures should be pretty unique, right?
-        card_query = Card.objects.raw('select id from LegacySite_card where data LIKE \'%%%s%%\'', {'signature':signature})
+        # card_query = Card.objects.raw('select id from LegacySite_card where data LIKE \'%%%s%%\'', {'signature':signature})
         user_cards = Card.objects.raw('select id, count(*) as count from LegacySite_card where LegacySite_card.user_id = %s' % str(request.user.id))
         card_query_string = ""
-        print("Found %s cards" % len(card_query))
-        for thing in card_query:
-            # print cards as strings
-            card_query_string += str(thing) + '\n'
-        if len(card_query) == 0:
+        # print("Found %s cards" % len(card_query))
+        # for thing in card_query:
+        #     # print cards as strings
+        #     card_query_string += str(thing) + '\n'
+        # if len(card_query) == 0:
+        if True:
             # card not known, add it.
             if card_fname is not None:
                 card_file_path = os.path.join(tempfile.gettempdir(), f'{card_fname}_{request.user.id}_{user_cards[0].count + 1}.gftcrd')
